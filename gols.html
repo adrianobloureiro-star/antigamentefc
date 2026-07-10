@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Pelada FC - Gols</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+<header>
+
+<div class="logo-container">
+
+<img 
+src="logo.png"
+alt="Logo Pelada FC"
+class="logo">
+
+</div>
+
+
+<h1>🥅⚽ Pelada FC</h1>
+
+<p>
+Controle de Gols
+</p>
+
+
+</header>
+
+
+
+<main>
+
+
+<section class="card">
+
+
+<h2>
+📅 Estatística da Pelada
+</h2>
+
+
+<p>
+
+Data:
+
+<strong id="dataAtual"></strong>
+
+</p>
+
+
+</section>
+
+
+
+<section class="card">
+
+
+<h2>
+⚽ Jogadores
+</h2>
+
+
+<div id="listaGols">
+
+
+<!-- jogadores serão carregados aqui -->
+
+
+</div>
+
+
+</section>
+
+
+
+
+<section class="card">
+
+
+<h2>
+🏆 Ranking de Artilheiros
+</h2>
+
+
+<div id="rankingGols">
+
+
+<!-- ranking -->
+
+
+</div>
+
+
+</section>
+
+
+
+
+<section class="botoes">
+
+
+<button onclick="voltarInicio()">
+
+⬅ Voltar
+
+</button>
+
+
+<button onclick="salvarGols()">
+
+💾 Salvar Resultado
+
+</button>
+
+
+</section>
+
+
+
+</main>
+
+
+
+<script src="config.js"></script>
+
+<script src="api.js"></script>
+
+<script src="gols.js"></script>
+
+
+</body>
+
+</html>
