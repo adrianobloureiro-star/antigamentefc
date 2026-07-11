@@ -200,3 +200,31 @@
 
 
     }
+    // ======================================
+// Buscar Ranking Geral
+// ======================================
+
+async function buscarRanking(){
+
+    try{
+
+        const resposta = await fetch(
+            API_URL + "?action=listarRanking"
+        );
+
+        const dados = await resposta.json();
+
+        return dados;
+
+    }catch(erro){
+
+        console.error(
+            "Erro ao buscar ranking:",
+            erro
+        );
+
+        return [];
+
+    }
+
+}
