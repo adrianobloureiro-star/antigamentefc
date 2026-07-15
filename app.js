@@ -122,14 +122,8 @@ function mostrarJogadores() {
 
         lista.appendChild(div);
 
-
-
-
     });
-
-
 }
-
 
 
 // ======================================
@@ -228,36 +222,31 @@ function atualizarContadores() {
 // ======================================
 // Marcar todos
 // ======================================
-
 async function marcarTodos() {
 
+    const atualizacoes = [];
 
-    for (let jogador of jogadores) {
-
+    for (const jogador of jogadores) {
 
         if (jogador.ativo) {
 
-
             jogador.presente = true;
 
-
-            await atualizarPresencaAPI(
-                jogador.id,
-                true
+            atualizacoes.push(
+                atualizarPresencaAPI(jogador.id, true)
             );
 
         }
 
     }
 
+    await Promise.all(atualizacoes);
 
     mostrarJogadores();
 
     atualizarContadores();
 
-
 }
-
 
 
 
@@ -268,44 +257,31 @@ async function marcarTodos() {
 
 async function limparPresencas() {
 
+    if (!confirm("Deseja retirar todos da lista?")) return;
 
-    if (
-        !confirm(
-            "Deseja retirar todos da lista?"
-        )
-    )
-        return;
+    const atualizacoes = [];
 
-
-
-    for (let jogador of jogadores) {
-
+    for (const jogador of jogadores) {
 
         if (jogador.ativo) {
 
-
             jogador.presente = false;
 
-
-            await atualizarPresencaAPI(
-                jogador.id,
-                false
+            atualizacoes.push(
+                atualizarPresencaAPI(jogador.id, false)
             );
 
         }
 
     }
 
-
+    await Promise.all(atualizacoes);
 
     mostrarJogadores();
 
     atualizarContadores();
 
-
 }
-
-
 
 // ======================================
 // Excluir jogador
@@ -472,9 +448,7 @@ function alternarPresenca(id, botao) {
         botao.innerHTML =
             "OFF";
 
-
     }
-
 
 }
 // ======================================
