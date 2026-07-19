@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Lista de Presença</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo-container">
+
+        <img src="logo.png" alt="Logo Pelada FC" class="logo">
+
+    </div>
+
+    <h1>⚽ ANTIGAMENTE FUTEBOL CLUBE</h1>
+
+    <p>Lista de Presença</p>
+
+</header>
+
+
+<main>
+
+    <section class="card">
+
+        <h2>Registrar Presença</h2>
+
+        <p id="data"></p>
+
+        <p id="hora"></p>
+
+
+        <input
+            type="text"
+            id="nome"
+            placeholder="Digite seu nome">
+
+
+        <button 
+            id="btnRegistrarPresenca"
+            onclick="registrarPresenca()">
+
+            ✅ Confirmar Presença
+
+        </button>
+
+
+    </section>
+
+
+    <section class="card">
+
+        <h2>Presentes Hoje</h2>
+
+        <div id="listaPresenca"></div>
+
+
+    </section>
+
+
+</main>
+
+
+<footer class="credito">
+
+    Desenvolvido por <strong>BRAZTEC</strong>
+    <br>
+    📱 27 99836-1919
+
+</footer>
+
+
+
+<script src="config.js"></script>
+
+<script src="api.js"></script>
+
+<script src="presenca.js"></script>
+
+
+</body>
+
+</html>
