@@ -1,213 +1,199 @@
-        <!DOCTYPE html>
-        <html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-BR">
 
-        <head>
+<head>
 
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-            <title>Pelada FC</title>
+    <title>Pelada FC</title>
 
-            <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">
 
-        </head>
+</head>
 
-        <body>
+<body>
 
-            <header>
+    <header>
 
-            <div class="logo-container">
+        <div class="logo-container">
 
-                <img 
-                src="logo.png"
-                alt="Logo Pelada FC"
-                class="logo">
+            <img src="logo.png" alt="Logo Pelada FC" class="logo">
+
+        </div>
+
+
+        <h1>⚽ ANTIGAMENTE FUTEBOL CLUBE</h1>
+
+        <p>
+            Sorteador Inteligente de Times
+        </p>
+
+    </header>
+
+    <main>
+
+        <!-- Cadastro -->
+
+        <section class="card">
+
+            <h2>Novo Jogador</h2>
+
+            <input type="text" id="nome" placeholder="Nome do jogador">
+
+            <select id="posicao">
+
+                <option value="GOL">Goleiro</option>
+                <option value="ZAG">Zagueiro</option>
+                <option value="LAT">Lateral</option>
+                <option value="VOL">Volante</option>
+                <option value="MEI">Meia</option>
+                <option value="ATA">Atacante</option>
+
+            </select>
+
+            <select id="nota">
+
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+                <option>6</option>
+                <option>7</option>
+                <option>8</option>
+                <option>9</option>
+                <option selected>10</option>
+
+            </select>
+
+            <button id="btnAdicionar">
+
+                ➕ Adicionar Jogador
+
+            </button>
+
+        </section>
+
+        <!-- Pesquisa -->
+
+        <section class="card">
+
+            <input type="text" id="pesquisa" placeholder="Pesquisar jogador...">
+
+        </section>
+
+        <!-- Contadores -->
+
+        <section class="card contadores">
+
+            <div>
+
+                <strong>Jogadores Linha</strong>
+
+                <span id="contadorLinha">
+
+                    0 / 20
+
+                </span>
 
             </div>
 
+            <div>
 
-         <h1>⚽ ANTIGAMENTE FUTEBOL CLUBE</h1>
+                <strong>Goleiros</strong>
 
-            <p>
-                Sorteador Inteligente de Times
-            </p>
+                <span id="contadorGoleiros">
 
-        </header>
+                    0
 
-            <main>
+                </span>
 
-                <!-- Cadastro -->
+            </div>
 
-                <section class="card">
+        </section>
 
-                    <h2>Novo Jogador</h2>
+        <!-- Lista -->
 
-                    <input
-                        type="text"
-                        id="nome"
-                        placeholder="Nome do jogador">
+        <section class="card">
 
-                    <select id="posicao">
+            <h2>Jogadores</h2>
 
-                        <option value="GOL">Goleiro</option>
-                        <option value="ZAG">Zagueiro</option>
-                        <option value="LAT">Lateral</option>
-                        <option value="VOL">Volante</option>
-                        <option value="MEI">Meia</option>
-                        <option value="ATA">Atacante</option>
+            <div id="listaJogadores">
 
-                    </select>
+            </div>
 
-                    <select id="nota">
+        </section>
 
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                        <option>6</option>
-                        <option>7</option>
-                        <option>8</option>
-                        <option>9</option>
-                        <option selected>10</option>
+        <!-- Botões -->
 
-                    </select>
+        <section class="botoes">
 
-                    <button id="btnAdicionar">
+            <button id="btnMarcarTodos">
+                ☑ Marcar Todos
+            </button>
 
-                        ➕ Adicionar Jogador
+            <button id="btnSortear">
+                ⚽ Sortear Times
+            </button>
 
-                    </button>
+            <button onclick="abrirGols()">
+                🥅 Gols
+            </button>
 
-                </section>
+            <button id="btnLimparPresencas">
+                🧹 Limpar
+            </button>
 
-                <!-- Pesquisa -->
+            <button onclick="logout()">
 
-                <section class="card">
+                🚪 Sair
 
-                    <input
-                        type="text"
-                        id="pesquisa"
-                        placeholder="Pesquisar jogador...">
+            </button>
 
-                </section>
+            <button onclick="window.location.href='presenca.html'">
+                ✅ Registrar Presença
+            </button>
 
-                <!-- Contadores -->
+        </section>
 
-                <section class="card contadores">
 
-                    <div>
+        <!-- Resultado -->
 
-                        <strong>Jogadores Linha</strong>
+        <section class="resultado" id="resultado">
 
-                        <span id="contadorLinha">
+        </section>
 
-                            0 / 20
+    </main>
+    <!-- teste de login 
 
-                        </span>
+<script>
+        if (!sessionStorage.getItem("usuario")) {
+            window.location.href = "login.html";
+        }
+    </script>
+    Botões -->
 
-                    </div>
 
-                    <div>
-
-                        <strong>Goleiros</strong>
-
-                        <span id="contadorGoleiros">
-
-                            0
-
-                        </span>
-
-                    </div>
-
-                </section>
-
-                <!-- Lista -->
-
-                <section class="card">
-
-                    <h2>Jogadores</h2>
-
-                    <div id="listaJogadores">
-
-                    </div>
-
-                </section>
-
-                <!-- Botões -->
-
-                <section class="botoes">
-
-
-    <button id="btnMarcarTodos">
-
-        ☑ Marcar Todos
-
-    </button>
-
-
-    <button id="btnLimparPresencas">
-
-        🧹 Limpar Presenças
-
-    </button>
-
-
-    <button id="btnSortear">
-
-        ⚽ Sortear Times
-
-    </button>
-
-
-    <button id="btnRessortear">
-
-        🔄 Ressortear
-
-    </button>
-
-
-<button onclick="abrirGols()">
-
-    🥅⚽ Gols
-
-</button>
-
-    </section>
-
-     
-        
-
-                <!-- Resultado -->
-
-                <section
-                    class="resultado"
-                    id="resultado">
-
-                </section>
-
-            </main>
-
-        <script src="config.js"></script>
-        <script src="api.js"></script>
-        <script src="sorteio.js"></script>
-        <script src="app.js"></script>
-
+    <script src="config.js"></script>
+    <script src="api.js"></script>
+    <script src="sorteio.js"></script>
     <script src="app.js"></script>
 
 
-<footer class="credito">
 
-    Desenvolvido por <strong>BRAZTEC</strong>
-    <br>
-    📱 27 99836-1919
+    <footer class="credito">
 
-</footer>
+        Desenvolvido por <strong>BRAZTEC</strong>
+        <br>
+        📱 27 99836-1919
+
+    </footer>
 
 
-</body>    
-    
-    
-    </body>
+</body>
 
-        </html>
+
+</body>
+
+</html>
