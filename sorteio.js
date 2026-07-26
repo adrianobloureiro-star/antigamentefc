@@ -1,15 +1,37 @@
+
 // ======================================
 // PELADA FC
-// Algoritmo de Sorteio Inteligente
+// Sorteador Inteligente de Times
+// Nova lógica
 // ======================================
 
 
 let ultimoSorteio = null;
+// ======================================
+// RESTRIÇÕES FIXAS
+// ======================================
 
+const restricoesFixas = [
 
+    // ["ADAIL", "Joaquim"],
+     //["Hamilton", "Jeffinho"]
+
+];
 
 // ======================================
-// Botão Sortear
+// RESTRIÇÕES DA SESSÃO
+// ======================================
+
+// Se o app.js já criou esta variável,
+// aproveitamos a mesma.
+
+
+if (typeof restricoes === "undefined") {
+    var restricoes = [];
+}
+
+// ======================================
+// BOTÃO SORTEAR
 // ======================================
 
 document
@@ -21,91 +43,421 @@ document
             sortearTimes();
 
         });
+botao.onclick =
+    sortearTimes;
+
 
 
 // ======================================
-// Sorteio principal
+// FUNÇÃO PRINCIPAL DO SORTEIO
 // ======================================
 
 function sortearTimes() {
 
 
-    const presentes =
-        jogadores.filter(
-            j => j.presente &&
-                j.ativo
-        );
+    // jogadores marcados como presentes
+
+    const presentes = jogadores.filter(
+        jogador =>
+            jogador.presente &&
+            jogador.ativo
+    );
 
 
 
-    const linha =
-        presentes.filter(
-            j => j.posicao != "GOL"
-        );
+    // separa linha e goleiros
+
+    const linha = presentes.filter(
+        jogador =>
+            jogador.posicao !== "GOL"
+    );
 
 
-    const goleiros =
-        presentes.filter(
-            j => j.posicao == "GOL"
-        );
+    const goleiros = presentes.filter(
+        jogador =>
+            jogador.posicao === "GOL"
+    );
 
 
+
+    // validação dos jogadores
 
     if (
         linha.length !== 20 ||
         goleiros.length !== 2
     ) {
 
+
         alert(
-            "É necessário ter exatamente 20 jogadores de linha e 2 goleiros presentes."
+            "O sorteio precisa ter exatamente 20 jogadores de linha e 2 goleiros presentes."
         );
+
 
         return;
 
     }
 
 
-    let melhorResultado = null;
+    // ======================================
+    // GERA OS TIMES
+    // ======================================
 
-    let menorDiferenca = 999;
+
+    const resultado =
+        gerarTimes(presentes);
 
 
 
-    // tenta várias combinações
+    ultimoSorteio =
+        resultado;
 
-    for (
-        let i = 0;
-        i < CONFIG_APP.TENTATIVAS_SORTEIO;
-        i++
+
+
+    exibirResultado(
+        resultado
+    );
+
+
+}
+// ======================================
+// BLOCO 2/3
+// GERAÇÃO DOS TIMES
+// Distribuição por posição
+// ======================================
+
+
+function gerarTimes(lista) {
+
+
+    const grupos = {
+
+
+        GOL: [],
+        ZAG: [],
+        LAT: [],
+        VOL: [],
+        MEI: [],
+        ATA: []
+
+
+    };
+
+
+
+    // ======================================
+    // Separar jogadores por posição
+    // ======================================
+
+
+    lista.forEach(jogador => {
+
+
+        if (grupos[jogador.posicao]) {
+
+
+            grupos[jogador.posicao]
+                .push(jogador);
+
+
+        }
+
+
+    });
+
+
+
+
+    const timeA = {
+
+
+        jogadores: [],
+        nota: 0
+
+
+    };
+
+
+
+    const timeB = {
+
+
+        jogadores: [],
+        nota: 0
+
+
+        };
+
+   function possuiRestricao(time, jogador) {
+
+    const todasRestricoes = [
+        ...restricoesFixas,
+        ...restricoes
+    ];
+
+    return todasRestricoes.some(([jogador1, jogador2]) => {
+
+        if (jogador.nome === jogador1) {
+
+            return time.jogadores.some(
+                j => j.nome === jogador2
+            );
+
+        }
+
+        if (jogador.nome === jogador2) {
+
+            return time.jogadores.some(
+                j => j.nome === jogador1
+            );
+
+        }
+
+        return false;
+
+    });
+
+}
+
+
+    // ======================================
+    // Distribuir posições entre os times
+    // ======================================
+
+    Object.keys(grupos).forEach(posicao => {
+
+        const jogadoresPosicao = grupos[posicao];
+
+        // Ordena do maior para o menor
+        jogadoresPosicao.sort((a, b) => Number(b.nota) - Number(a.nota));
+
+        let notaPosA = 0;
+        let notaPosB = 0;
+
+        while (jogadoresPosicao.length > 0) {
+
+            const jogador = jogadoresPosicao.shift();
+
+            // Time mais fraco naquela posição recebe o próximo jogador
+            // Time mais fraco naquela posição recebe o próximo jogador
+            if (notaPosA <= notaPosB) {
+
+                if (possuiRestricao(timeA, jogador)) {
+
+                    timeB.jogadores.push(jogador);
+                    notaPosB += Number(jogador.nota);
+
+                } else {
+
+                    timeA.jogadores.push(jogador);
+                    notaPosA += Number(jogador.nota);
+
+                }
+
+            } else {
+
+                if (possuiRestricao(timeB, jogador)) {
+
+                    timeA.jogadores.push(jogador);
+                    notaPosA += Number(jogador.nota);
+
+                } else {
+
+                    timeB.jogadores.push(jogador);
+                    notaPosB += Number(jogador.nota);
+
+                }
+
+            }
+        }
+
+    });
+
+
+    // ======================================
+    // Calcular pontuação dos times
+    // ======================================
+
+
+    timeA.nota =
+        timeA.jogadores.reduce(
+            (total, jogador) => {
+
+
+                return total +
+                    Number(jogador.nota || 0);
+
+
+            },
+            0
+        );
+
+
+
+
+    timeB.nota =
+        timeB.jogadores.reduce(
+            (total, jogador) => {
+
+
+                return total +
+                    Number(jogador.nota || 0);
+
+
+            },
+            0
+        );
+
+
+
+    // ======================================
+    // Ajusta quantidade de jogadores
+    // sempre 11 x 11
+    // ======================================
+
+
+    while (
+        timeA.jogadores.length >
+        timeB.jogadores.length
     ) {
 
 
-        const resultado =
-            gerarTimes(
-                linha
-            );
+        const jogador =
+            timeA.jogadores.pop();
+
+
+        timeB.jogadores.push(
+            jogador
+        );
+
+
+    }
 
 
 
-        const diferenca =
+    while (
+        timeB.jogadores.length >
+        timeA.jogadores.length
+    ) {
+
+
+        const jogador =
+            timeB.jogadores.pop();
+
+
+        timeA.jogadores.push(
+            jogador
+        );
+
+
+    }
+
+    // ======================================
+    // Equilibrar pontuação dos times
+    // mantendo posições
+    // ======================================
+
+
+    for (
+        let tentativa = 0;
+        tentativa < 100;
+        tentativa++
+    ) {
+
+
+        const diferencaAtual =
             Math.abs(
-                resultado.timeA.nota -
-                resultado.timeB.nota
+                timeA.nota -
+                timeB.nota
             );
-
-
+        // se a diferença já está aceitável,
+        // encerra o ajuste
 
         if (
-            diferenca <
-            menorDiferenca
+            diferencaAtual <= 5
         ) {
 
-            menorDiferenca =
-                diferenca;
+            break;
+
+        }
 
 
-            melhorResultado =
-                resultado;
+        let melhorTroca = null;
+
+        let menorDiferenca =
+            diferencaAtual;
+
+
+
+        for (
+            const jogadorA of timeA.jogadores
+        ) {
+
+
+            for (
+                const jogadorB of timeB.jogadores
+            ) {
+
+
+                // troca somente mesma posição
+
+                if (
+                    jogadorA.posicao !==
+                    jogadorB.posicao
+                ) {
+
+                    continue;
+
+                }
+
+
+
+                const novaNotaA =
+                    timeA.nota -
+                    Number(jogadorA.nota) +
+                    Number(jogadorB.nota);
+
+
+
+                const novaNotaB =
+                    timeB.nota -
+                    Number(jogadorB.nota) +
+                    Number(jogadorA.nota);
+
+
+
+                const novaDiferenca =
+                    Math.abs(
+                        novaNotaA -
+                        novaNotaB
+                    );
+
+
+
+                if (
+                    novaDiferenca <
+                    menorDiferenca
+                ) {
+
+
+                    menorDiferenca =
+                        novaDiferenca;
+
+
+
+                    melhorTroca = {
+
+                        jogadorA,
+                        jogadorB,
+                        novaNotaA,
+                        novaNotaB
+
+                    };
+
+
+                }
+
+
+            }
 
 
         }
@@ -113,256 +465,285 @@ function sortearTimes() {
 
 
         if (
-            diferenca == 0
-        )
+            !melhorTroca
+        ) {
+
             break;
+
+        }
+
+
+
+        const posA =
+            timeA.jogadores.indexOf(
+                melhorTroca.jogadorA
+            );
+
+
+        const posB =
+            timeB.jogadores.indexOf(
+                melhorTroca.jogadorB
+            );
+
+
+
+        timeA.jogadores[posA] =
+            melhorTroca.jogadorB;
+
+
+
+        timeB.jogadores[posB] =
+            melhorTroca.jogadorA;
+
+
+
+        timeA.nota =
+            melhorTroca.novaNotaA;
+
+
+
+        timeB.nota =
+            melhorTroca.novaNotaB;
 
 
     }
 
+    return {
 
 
-    distribuirGoleiros(
-        melhorResultado,
-        goleiros
-    );
+        timeA,
+        timeB
+
+
+    };
+
+
+}
+// ======================================
+// BLOCO 3/3
+// EXIBIÇÃO DOS TIMES
+// ======================================
 
 
 
-    ultimoSorteio =
-        melhorResultado;
+// ======================================
+// Atualiza a função principal
+// ======================================
+
+
+// ======================================
+// EXIBIR RESULTADO
+// Mapa + Lista dos jogadores
+// ======================================
+
+function exibirResultado(resultado) {
+
+
+    const area =
+        document.getElementById(
+            "resultado"
+        );
+    area.style.display = "block";
+
+
+    area.innerHTML = `
+        ...
+    `;
+
+
+    const botao =
+        document.getElementById(
+            "btnSortear"
+        );
+
+
+    botao.innerHTML = "🔄 Ressortear";
+    botao.onclick = sortearNovamente;
 
 
 
-    mostrarResultado(
-        melhorResultado
-    );
+    area.style.display = "block";
+
+
+
+    area.innerHTML = `
+
+
+        <h2 style="text-align:center;">
+            ⚽ PELADA FC
+        </h2>
+
+
+
+        <div class="timesResultado">
+
+
+            <div class="time">
+
+
+                <h2>
+                    🟢 TIME A
+                </h2>
+
+
+
+                ${mapaTatico(
+        resultado.timeA
+    )}
+
+
+
+                <br>
+
+
+
+                ${listaEscalacao(
+        resultado.timeA
+    )}
+
+
+
+                <h3>
+                    ⭐ Total:
+                    ${resultado.timeA.nota}
+                </h3>
+
+
+            </div>
+
+
+
+
+
+            <div class="time">
+
+
+                <h2>
+                    ⚫ TIME B
+                </h2>
+
+
+
+                ${mapaTatico(
+        resultado.timeB
+    )}
+
+
+
+                <br>
+
+
+
+                ${listaEscalacao(
+        resultado.timeB
+    )}
+
+
+
+                <h3>
+                    ⭐ Total:
+                    ${resultado.timeB.nota}
+                </h3>
+
+
+            </div>
+
+
+
+        </div>
+
+
+    `;
 
 
 }
 
 
-
-
 // ======================================
-// Gera times equilibrados
+// Lista dos jogadores
 // ======================================
 
-function gerarTimes(lista) {
+
+function listaEscalacao(time) {
 
 
-    let jogadoresOrdenados =
-        [...lista]
-            .sort(
-                () => Math.random() - 0.5
-            );
+    let html = `
+
+
+        <div class="listaJogadores">
+
+
+            <table>
+
+
+                <tr>
+
+                    <th>
+                        Jogador
+                    </th>
+
+                    <th>
+                        Posição
+                    </th>
+
+                    <th>
+                        Nota
+                    </th>
+
+
+                </tr>
+
+
+    `;
 
 
 
-    jogadoresOrdenados =
-        jogadoresOrdenados.sort(
-            (a, b) =>
-                b.nota - a.nota
-        );
-
-
-
-    let timeA = {
-
-        jogadores: [],
-        nota: 0
-
-    };
-
-
-    let timeB = {
-
-        jogadores: [],
-        nota: 0
-
-    };
-
-
-
-    jogadoresOrdenados.forEach(
+    time.jogadores.forEach(
         jogador => {
 
 
-            if (
-                timeA.nota <=
-                timeB.nota
-            ) {
 
-                timeA.jogadores.push(
-                    jogador
-                );
-
-                timeA.nota +=
-                    Number(jogador.nota);
+            html += `
 
 
-            } else {
+                <tr>
 
 
-                timeB.jogadores.push(
-                    jogador
-                );
+                    <td>
+                        ${jogador.nome}
+                    </td>
 
 
-                timeB.nota +=
-                    Number(jogador.nota);
+                    <td>
+                        ${jogador.posicao}
+                    </td>
 
 
-            }
+                    <td>
+                        ⭐ ${jogador.nota}
+                    </td>
+
+
+                </tr>
+
+
+            `;
 
 
         });
 
 
 
-    return {
+    html += `
 
-        timeA,
-        timeB
 
-    };
+            </table>
 
 
-}
+        </div>
 
 
-
-
-
-// ======================================
-// Distribuir goleiros
-// ======================================
-// ======================================
-// Distribuir goleiros
-// ======================================
-
-function distribuirGoleiros(resultado, goleiros) {
-
-    // Adiciona um goleiro em cada time
-    resultado.timeA.jogadores.unshift(goleiros[0]);
-    resultado.timeB.jogadores.unshift(goleiros[1]);
-
-    // Recalcula a pontuação dos times
-    resultado.timeA.nota = resultado.timeA.jogadores.reduce(
-        (total, jogador) => total + Number(jogador.nota),
-        0
-    );
-
-    resultado.timeB.nota = resultado.timeB.jogadores.reduce(
-        (total, jogador) => total + Number(jogador.nota),
-        0
-    );
-
-}
-// ======================================
-// Mostrar resultado
-// ======================================
-
-function mostrarResultado(resultado) {
-
-    const area = document.getElementById("resultado");
-
-    area.style.display = "block";
-
-    const diferenca = Math.abs(
-        resultado.timeA.nota - resultado.timeB.nota
-    );
-
-    area.innerHTML = `
-
-                    <h2 style="text-align:center;">
-                        ⚽ ANTIGAMENTE FUTEBOL CLUBE
-                    </h2>
-
-                    <div class="campoTime">
-
-                        <h2>🟢 TIME A</h2>
-
-                        ${campoTatico(resultado.timeA)}
-
-                        <div class="total">
-                            Total ⭐ ${resultado.timeA.nota}
-                        </div>
-
-                    </div>
-
-                    <hr>
-
-                    <div class="campoTime">
-
-                        <h2>⚫ TIME B</h2>
-
-                        ${campoTatico(resultado.timeB)}
-
-                        <div class="total">
-                            Total ⭐ ${resultado.timeB.nota}
-                        </div>
-
-                    </div>
-
-                    <hr>
-
-                    <h3 style="text-align:center;">
-                        Diferença de Pontos ⭐ ${diferenca}
-                    </h3>
-
-                `;
-const botao = document.getElementById("btnSortear");
-
-botao.innerHTML = "🔄 Ressortear";
-}
-
-
-
-
-function listaTime(time) {
-
-
-    let html = "";
-
-
-    time.jogadores.forEach(j => {
-
-
-        html += `
-
-
-                                <div class="jogadorCampo">
-
-
-                                    <strong>
-
-                                    ⚽ ${j.nome}
-
-                                    </strong>
-
-
-                                    <span>
-
-                                    ${j.posicao}
-
-                                    </span>
-
-
-                                    <small>
-
-                                    ⭐ ${j.nota}
-
-                                    </small>
-
-
-                                </div>
-
-
-                                `;
-
-
-    });
+    `;
 
 
 
@@ -370,179 +751,217 @@ function listaTime(time) {
 
 
 }
-function campoTatico(time) {
 
-    const ordem = [
 
-        "GOL",
 
-        "ZAG", "ZAG",
 
-        "LAT", "LAT",
 
-        "VOL", "VOL",
+// ======================================
+// Completa o botão de sorteio
+// ======================================
 
-        "MEI", "MEI",
+// ======================================
+// RESSORTEAR
+// Novo sorteio completo
+// ======================================
 
-        "ATA", "ATA"
+function sortearNovamente() {
+
+
+    const presentes =
+        jogadores.filter(
+            jogador =>
+                jogador.presente &&
+                jogador.ativo
+        );
+
+
+
+    // embaralha profundamente a lista
+
+    presentes.sort(
+        () =>
+            Math.random() - 0.5
+    );
+
+
+    presentes.sort(
+        () =>
+            Math.random() - 0.5
+    );
+
+
+
+    const novoResultado =
+        gerarTimes(
+            presentes
+        );
+
+
+
+    ultimoSorteio =
+        novoResultado;
+
+
+
+    exibirResultado(
+        novoResultado
+    );
+
+
+}
+// ======================================
+// MAPA TÁTICO
+// Mantém classes originais do CSS
+// ======================================
+
+
+function mapaTatico(time) {
+
+
+    const jogadores =
+        [...time.jogadores].reverse();
+
+
+
+    function jogadorHTML(jogador) {
+
+
+        if (!jogador)
+            return "";
+
+
+
+        return `
+
+            <div class="jogadorTatico">
+
+                <strong>
+                    ${jogador.nome.split(" ")[0]}
+                </strong>
+
+
+                <small>
+
+                    ${jogador.posicao}
+
+                    |
+
+                    ⭐${jogador.nota}
+
+                </small>
+
+
+            </div>
+
+        `;
+
+
+    }
+
+
+
+
+    // separa apenas para visualização
+
+    const escala = [
+
+        jogadores.shift(), // ataque
+        jogadores.shift(),
+
+        jogadores.shift(), // meia
+        jogadores.shift(),
+
+        jogadores.shift(), // linha
+        jogadores.shift(),
+        jogadores.shift(),
+        jogadores.shift(),
+
+        jogadores.shift(), // zaga
+        jogadores.shift(),
+
+        jogadores.shift()  // goleiro
 
     ];
 
-    // Organiza jogadores por posição
-    const grupos = {
-        GOL: [],
-        ZAG: [],
-        LAT: [],
-        VOL: [],
-        MEI: [],
-        ATA: []
-    };
 
-    time.jogadores.forEach(j => {
-        if (grupos[j.posicao]) {
-            grupos[j.posicao].push(j);
-        }
-    });
 
-    // Jogadores já utilizados
-    const usados = [];
 
-    // Procura um jogador disponível
-    function pegarJogador(posicao) {
-
-        // Primeiro tenta da posição correta
-        while (grupos[posicao].length) {
-
-            const jogador = grupos[posicao].shift();
-
-            if (!usados.includes(jogador)) {
-                usados.push(jogador);
-                return jogador;
-            }
-
-        }
-
-        // Depois procura qualquer outro jogador ainda não usado
-        for (const p in grupos) {
-
-            while (grupos[p].length) {
-
-                const jogador = grupos[p].shift();
-
-                if (!usados.includes(jogador)) {
-                    usados.push(jogador);
-                    return jogador;
-                }
-
-            }
-
-        }
-
-        return null;
-
-    }
-
-    // Monta escalação
-    const escala = {};
-
-    ordem.forEach((posicao, index) => {
-
-        escala[index] = pegarJogador(posicao);
-
-    });
-
-    // Retorna apenas o primeiro nome
-    function nome(j) {
-
-        if (!j) return "";
-
-        return j.nome.split(" ")[0];
-
-    }
 
     return `
 
-            <div class="formacao">
 
-        <div class="linhaForm ATA">
+<div class="formacao">
 
-    ${escala[9] ? `
-    <div class="jogadorTatico">
-        <strong>${nome(escala[9])}</strong>
-        <small>${escala[9].posicao} | ⭐${escala[9].nota}</small>
-    </div>` : ""}
 
-    ${escala[10] ? `
-    <div class="jogadorTatico">
-        <strong>${nome(escala[10])}</strong>
-        <small>${escala[10].posicao} | ⭐${escala[10].nota}</small>
-    </div>` : ""}
+    <div class="linhaForm ATA">
+
+        ${jogadorHTML(escala[0])}
+
+        ${jogadorHTML(escala[1])}
+
+
+    </div>
+
+
+
+
+    <div class="linhaForm MEI">
+
+
+        ${jogadorHTML(escala[2])}
+
+        ${jogadorHTML(escala[3])}
+
+
+    </div>
+
+
+
+
+    <div class="linhaForm">
+
+
+        ${jogadorHTML(escala[4])}
+
+        ${jogadorHTML(escala[5])}
+
+        ${jogadorHTML(escala[6])}
+
+        ${jogadorHTML(escala[7])}
+
+
+    </div>
+
+
+
+
+    <div class="linhaForm ZAG">
+
+
+        ${jogadorHTML(escala[8])}
+
+        ${jogadorHTML(escala[9])}
+
+
+    </div>
+
+
+
+
+    <div class="linhaForm GOL">
+
+
+        ${jogadorHTML(escala[10])}
+
+
+    </div>
+
+
 
 </div>
 
-        <div class="linhaForm MEI">
-            ${escala[7] ? `
-            <div class="jogadorTatico">
-                <strong>${nome(escala[7])}</strong>
-                <small>${escala[7].posicao} | ⭐${escala[7].nota}</small>
-            </div>` : ""}
 
-            ${escala[8] ? `
-            <div class="jogadorTatico">
-                <strong>${nome(escala[8])}</strong>
-                <small>${escala[8].posicao} | ⭐${escala[8].nota}</small>
-            </div>` : ""}
-        </div>
-
-        <div class="linhaForm">
-            ${escala[3] ? `
-            <div class="jogadorTatico">
-                <strong>${nome(escala[3])}</strong>
-                <small>${escala[3].posicao} | ⭐${escala[3].nota}</small>
-            </div>` : ""}
-
-            ${escala[5] ? `
-            <div class="jogadorTatico">
-                <strong>${nome(escala[5])}</strong>
-                <small>${escala[5].posicao} | ⭐${escala[5].nota}</small>
-            </div>` : ""}
-
-            ${escala[6] ? `
-            <div class="jogadorTatico">
-                <strong>${nome(escala[6])}</strong>
-                <small>${escala[6].posicao} | ⭐${escala[6].nota}</small>
-            </div>` : ""}
-
-            ${escala[4] ? `
-            <div class="jogadorTatico">
-                <strong>${nome(escala[4])}</strong>
-                <small>${escala[4].posicao} | ⭐${escala[4].nota}</small>
-            </div>` : ""}
-        </div>
-
-        <div class="linhaForm ZAG">
-            ${escala[1] ? `
-            <div class="jogadorTatico">
-                <strong>${nome(escala[1])}</strong>
-                <small>${escala[1].posicao} | ⭐${escala[1].nota}</small>
-            </div>` : ""}
-
-            ${escala[2] ? `
-            <div class="jogadorTatico">
-                <strong>${nome(escala[2])}</strong>
-                <small>${escala[2].posicao} | ⭐${escala[2].nota}</small>
-            </div>` : ""}
-        </div>
-
-        <div class="linhaForm GOL">
-            ${escala[0] ? `
-            <div class="jogadorTatico">
-                <strong>🧤 ${nome(escala[0])}</strong>
-                <small>${escala[0].posicao} | ⭐${escala[0].nota}</small>
-            </div>` : ""}
-        </div>
-
-    </div>
-            `;
+`;
 
 }
