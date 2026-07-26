@@ -22,7 +22,6 @@
 
         </div>
 
-
         <h1>⚽ ANTIGAMENTE FUTEBOL CLUBE</h1>
 
         <p>
@@ -68,9 +67,7 @@
             </select>
 
             <button id="btnAdicionar">
-
                 ➕ Adicionar Jogador
-
             </button>
 
         </section>
@@ -92,9 +89,7 @@
                 <strong>Jogadores Linha</strong>
 
                 <span id="contadorLinha">
-
                     0 / 20
-
                 </span>
 
             </div>
@@ -104,9 +99,7 @@
                 <strong>Goleiros</strong>
 
                 <span id="contadorGoleiros">
-
                     0
-
                 </span>
 
             </div>
@@ -119,34 +112,45 @@
 
             <h2>Jogadores</h2>
 
-            <div id="listaJogadores">
-
-            </div>
+            <div id="listaJogadores"></div>
 
         </section>
 
         <!-- Botões -->
 
-            <section class="botoes">
+        <section class="botoes">
 
-                <button id="btnMarcarTodos">
-                    ☑ Marcar Todos
-                </button>
+            <button id="btnMarcarTodos">
+                ☑ Marcar Todos
+            </button>
 
-                <button id="btnSortear">
-                    ⚽ Sortear Times
-                </button>
+            <button id="btnSortear">
+                ⚽ Sortear Times
+            </button>
 
-                <button onclick="abrirGols()">
-                    🥅 Gols
-                </button>
+            <button id="btnRestricoes">
+                ⚠ Restrições
+            </button>
 
-                <button id="btnLimparPresencas">
-                    🧹 Limpar
-                </button>
+            <button onclick="abrirGols()">
+                🥅 Gols
+            </button>
 
-            </section>
+            <button id="btnLimparPresencas">
+                🧹 Limpar
+            </button>
 
+            <!--
+            <button onclick="logout()">
+                🚪 Sair
+            </button>
+            -->
+
+            <button onclick="window.location.href='presenca.html'">
+                ✅ Registrar Presença
+            </button>
+
+        </section>
 
         <!-- Resultado -->
 
@@ -156,12 +160,13 @@
 
     </main>
 
-    <script src="config.js"></script>
-    <script src="api.js"></script>
-    <script src="sorteio.js"></script>
-    <script src="app.js"></script>
-
-
+    <!-- teste de login
+    <script>
+        if (!sessionStorage.getItem("usuario")) {
+            window.location.href = "login.html";
+        }
+    </script>
+    -->
 
     <footer class="credito">
 
@@ -171,9 +176,51 @@
 
     </footer>
 
+    <!-- ====================================== -->
+    <!-- MODAL DE RESTRIÇÕES -->
+    <!-- ====================================== -->
 
-</body>
+    <div id="modalRestricoes" class="modal" style="display:none;">
 
+        <div class="modal-conteudo">
+
+            <h2>⚠ Restrições do Sorteio</h2>
+
+            <label>Jogador 1</label>
+
+            <input type="text" id="restricaoJogador1" placeholder="Digite o nome do jogador">
+
+            <br>
+
+            <label>Jogador 2</label>
+
+            <input type="text" id="restricaoJogador2" placeholder="Digite o nome do jogador">
+            <br><br>
+
+            <button id="btnAdicionarRestricao">
+                ➕ Adicionar
+            </button>
+
+            <hr>
+
+            <div id="listaRestricoes"></div>
+
+            <br>
+
+            <button id="btnFecharRestricoes">
+                Fechar
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+
+    <script src="config.js"></script>
+    <script src="api.js"></script>
+    <script src="sorteio.js"></script>
+    <script src="app.js"></script>
 
 </body>
 
