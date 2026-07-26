@@ -335,8 +335,9 @@ document
             const nome =
                 document.getElementById(
                     "nome"
-                ).value;
-
+                ).value
+                    .trim()
+                    .toUpperCase();
 
 
             const posicao =
@@ -457,7 +458,7 @@ function alternarPresenca(id, botao) {
 
 document.getElementById("pesquisa").addEventListener("input", pesquisarJogadores);
 
-function pesquisarJogadores(){
+function pesquisarJogadores() {
 
     const texto = document
         .getElementById("pesquisa")
@@ -472,15 +473,117 @@ function pesquisarJogadores(){
             .textContent
             .toLowerCase();
 
-        if(nome.includes(texto)){
+        if (nome.includes(texto)) {
 
             item.style.display = "";
 
-        }else{
+        } else {
 
             item.style.display = "none";
 
         }
+
+    });
+
+}
+// ======================================
+// Logout
+// ======================================
+
+function logout() {
+
+    if (!confirm("Deseja sair do sistema?")) {
+
+        return;
+
+    }
+
+    sessionStorage.clear();
+
+    window.location.replace("login.html");
+
+}
+// ======================================
+/// ======================================
+// MODAL DE RESTRIÇÕES
+// ======================================
+
+const modalRestricoes = document.getElementById("modalRestricoes");
+
+document
+    .getElementById("btnRestricoes")
+    .addEventListener("click", abrirRestricoes);
+
+document
+    .getElementById("btnFecharRestricoes")
+    .addEventListener("click", fecharRestricoes);
+
+document
+    .getElementById("btnAdicionarRestricao")
+    .addEventListener("click", adicionarRestricao);
+
+
+function adicionarRestricao() {
+
+    const jogador1 = document
+        .getElementById("restricaoJogador1")
+        .value
+        .trim()
+        .toUpperCase();
+
+    const jogador2 = document
+        .getElementById("restricaoJogador2")
+        .value
+        .trim()
+        .toUpperCase();
+
+    if (jogador1 === "" || jogador2 === "") {
+        return;
+    }
+
+    restricoes.push([jogador1, jogador2]);
+
+    document.getElementById("restricaoJogador1").value = "";
+    document.getElementById("restricaoJogador2").value = "";
+
+    atualizarListaRestricoes();
+
+}
+
+
+function abrirRestricoes() {
+
+    modalRestricoes.style.display = "flex";
+
+}
+
+
+function fecharRestricoes() {
+
+    modalRestricoes.style.display = "none";
+
+}
+// ======================================
+// ATUALIZAR LISTA DE RESTRIÇÕES
+// ======================================
+
+function atualizarListaRestricoes() {
+
+    const lista = document.getElementById("listaRestricoes");
+
+    lista.innerHTML = "";
+
+    restricoes.forEach((item, indice) => {
+
+        lista.innerHTML += `
+            <div class="linhaRestricao">
+                <span>${item[0]} × ${item[1]}</span>
+
+                <button onclick="removerRestricao(${indice})">
+                    🗑
+                </button>
+            </div>
+        `;
 
     });
 
