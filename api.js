@@ -228,3 +228,49 @@ async function buscarRanking(){
     }
 
 }
+// ======================================
+// Registrar Presença
+// ======================================
+
+async function registrarPresencaAPI(nome){
+
+    const dados = {
+
+        action:"registrarPresenca",
+
+        nome:nome
+
+    };
+
+    return enviarDados(dados);
+
+}
+
+
+
+// ======================================
+// Buscar Presença do Dia
+// ======================================
+
+async function buscarPresencaHoje(){
+
+    try{
+
+        const resposta = await fetch(
+            API_URL + "?action=listarPresencaHoje"
+        );
+
+        return await resposta.json();
+
+    }catch(erro){
+
+        console.error(
+            "Erro ao buscar presença:",
+            erro
+        );
+
+        return [];
+
+    }
+
+}
