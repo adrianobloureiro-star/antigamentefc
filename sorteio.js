@@ -13,7 +13,7 @@ let ultimoSorteio = null;
 
 const restricoesFixas = [
 
-    ["ADAIL", "ADRIANO"],
+  //  ["ADAIL", "ADRIANO"],
      //["Hamilton", "Jeffinho"]
 
 ];
