@@ -13,7 +13,7 @@ let ultimoSorteio = null;
 
 const restricoesFixas = [
 
-  //  ["ADAIL", "ADRIANO"],
+    // ["ADAIL", "Joaquim"],
      //["Hamilton", "Jeffinho"]
 
 ];
@@ -223,55 +223,114 @@ function gerarTimes(lista) {
     // Distribuir posições entre os times
     // ======================================
 
-    Object.keys(grupos).forEach(posicao => {
+// Distribuir goleiros automaticamente
+// ======================================
 
-        const jogadoresPosicao = grupos[posicao];
+const goleiros = grupos.GOL;
 
-        // Ordena do maior para o menor
-        jogadoresPosicao.sort((a, b) => Number(b.nota) - Number(a.nota));
 
-        let notaPosA = 0;
-        let notaPosB = 0;
+if (goleiros.length === 2) {
 
-        while (jogadoresPosicao.length > 0) {
+    timeA.jogadores.push(goleiros[0]);
 
-            const jogador = jogadoresPosicao.shift();
+    timeB.jogadores.push(goleiros[1]);
 
-            // Time mais fraco naquela posição recebe o próximo jogador
-            // Time mais fraco naquela posição recebe o próximo jogador
-            if (notaPosA <= notaPosB) {
+}
 
-                if (possuiRestricao(timeA, jogador)) {
+let prioridadeTimeA = true;
 
-                    timeB.jogadores.push(jogador);
-                    notaPosB += Number(jogador.nota);
 
-                } else {
+// Distribuição por posição
+Object.keys(grupos).forEach((posicao, indicePosicao) => {
 
-                    timeA.jogadores.push(jogador);
-                    notaPosA += Number(jogador.nota);
 
-                }
+    // goleiros já foram distribuídos acima
+    if (posicao === "GOL") {
+        return;
+    }
+
+
+    const jogadoresPosicao = grupos[posicao];
+
+
+    // ordena do maior para o menor
+    jogadoresPosicao.sort(
+        (a, b) =>
+            Number(b.nota) - Number(a.nota)
+    );
+
+
+    // alterna quem começa a posição
+    // posição 0 = A
+    // posição 1 = B
+    prioridadeTimeA = indicePosicao % 2 === 0;
+
+
+
+    jogadoresPosicao.forEach((jogador, indiceJogador) => {
+
+
+        let vaiParaTimeA;
+
+
+
+        if (prioridadeTimeA) {
+
+
+            // padrão A B B A
+            vaiParaTimeA =
+                indiceJogador % 4 === 0 ||
+                indiceJogador % 4 === 3;
+
+
+        } else {
+
+
+            // padrão B A A B
+            vaiParaTimeA =
+                indiceJogador % 4 === 1 ||
+                indiceJogador % 4 === 2;
+
+
+        }
+
+
+
+        if (vaiParaTimeA) {
+
+
+            if (!possuiRestricao(timeA, jogador)) {
+
+                timeA.jogadores.push(jogador);
 
             } else {
 
-                if (possuiRestricao(timeB, jogador)) {
-
-                    timeA.jogadores.push(jogador);
-                    notaPosA += Number(jogador.nota);
-
-                } else {
-
-                    timeB.jogadores.push(jogador);
-                    notaPosB += Number(jogador.nota);
-
-                }
+                timeB.jogadores.push(jogador);
 
             }
+
+
+        } else {
+
+
+            if (!possuiRestricao(timeB, jogador)) {
+
+                timeB.jogadores.push(jogador);
+
+            } else {
+
+                timeA.jogadores.push(jogador);
+
+            }
+
+
         }
+
 
     });
 
+
+});// ======================================
 
     // ======================================
     // Calcular pontuação dos times
